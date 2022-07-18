@@ -1,0 +1,11 @@
+package com.huawei.intern.projectmanagement.repositories;
+
+import com.huawei.intern.projectmanagement.models.Project;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface ProjectRepository extends JpaRepository<Project,Long> {
+
+    public Project findByName(String name);
+}
