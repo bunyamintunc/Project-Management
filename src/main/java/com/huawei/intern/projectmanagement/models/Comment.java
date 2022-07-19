@@ -6,27 +6,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "_user")
 @Builder
-public class User {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String surName;
-    private String email;
-    private String imageUrl;
-    private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    Set<Role> roles;
+    private String name;
 
+    private String fileType;
+
+    @Lob
+    private byte[] data;
+
+    @ManyToOne
+    @JoinColumn(name = "task_id",nullable = false)
+    private Task task;
 
 }

@@ -19,12 +19,12 @@ public class ProjectmanagementApplication {
 		SpringApplication.run(ProjectmanagementApplication.class, args);
 	}
 
-	/*
+
 	@Bean
 	CommandLineRunner commandLineRunner(UserService userService, TicketService ticketService, RoleService roleService, ProjectService projectService, TaskService taskService){
 		return args -> {
-			userService.saveUser(User.builder().userName("bunaymin").surName("tünç").password("abc").email("abc").roles(new HashSet<>()).build());
-			userService.saveUser(User.builder().userName("Eyüp").surName("tünç").password("abc").email("yup@eyup").roles(new HashSet<>()).imageUrl("https://cdn-icons-png.flaticon.com/512/219/219986.png").build());
+			userService.saveUser(User.builder().username("bunaymin").surName("tünç").password("12345678").email("abc").roles(new HashSet<>()).build());
+			userService.saveUser(User.builder().username("Eyüp").surName("tünç").password("abc").email("yup@eyup").roles(new HashSet<>()).imageUrl("https://cdn-icons-png.flaticon.com/512/219/219986.png").build());
 			roleService.saveRole(Role.builder().name("ROLE_ADMIN").build());
 			userService.addRoleToUser("bunaymin","ROLE_ADMIN");
 			userService.addRoleToUser("Eyüp","ROLE_ADMIN");
@@ -70,5 +70,5 @@ public class ProjectmanagementApplication {
 		};
 
 
-	}*/
+	}
 }

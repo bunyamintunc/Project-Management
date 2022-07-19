@@ -3,6 +3,7 @@ package com.huawei.intern.projectmanagement.models;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -26,5 +27,8 @@ public class Task {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Ticket> tickets;
+
+    @OneToMany(mappedBy = "task",cascade = CascadeType.ALL)
+    private Set<Comment> comments;
 
 }

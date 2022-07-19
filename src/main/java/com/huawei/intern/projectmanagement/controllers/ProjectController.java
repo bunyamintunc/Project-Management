@@ -4,6 +4,7 @@ import com.huawei.intern.projectmanagement.dtos.request.AddTaskToProjectDto;
 import com.huawei.intern.projectmanagement.models.Project;
 import com.huawei.intern.projectmanagement.services.ProjectService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class ProjectController {
 
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public List<Project> listProjects(){
         return projectService.getAllProjects();
     }
