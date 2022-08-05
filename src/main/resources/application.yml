@@ -1,3 +1,4 @@
+
 spring:
   jpa:
     database: postgresql
@@ -16,3 +17,13 @@ spring:
     username: postgres
     password: root
     driverClassName: org.postgresql.Driver
+server:
+  port: 8081
+
+jwtDeneme:
+  app:
+    secret: deneme
+  expires:
+    in: 60480000
+
+

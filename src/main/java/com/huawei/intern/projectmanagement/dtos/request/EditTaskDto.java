@@ -12,9 +12,9 @@ import java.util.Set;
 @Data
 public class EditTaskDto {
 
-    private String name;
+    private Long taskId;
     private String desription;
-    private String ticketName;
-    private String userName;
+    private Long ticketId;
+    private Long userId;
 
 }

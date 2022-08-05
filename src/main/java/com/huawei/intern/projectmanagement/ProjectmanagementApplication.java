@@ -1,13 +1,21 @@
 package com.huawei.intern.projectmanagement;
 
-import com.huawei.intern.projectmanagement.dtos.request.AddTaskToProjectDto;
+import com.huawei.intern.projectmanagement.dtos.request.AddTaskDto;
 import com.huawei.intern.projectmanagement.models.*;
+import com.huawei.intern.projectmanagement.repositories.CommentRepository;
+import com.huawei.intern.projectmanagement.repositories.UserRepository;
 import com.huawei.intern.projectmanagement.services.*;
 import org.hibernate.usertype.UserVersionType;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.HashSet;
 import java.util.List;
@@ -20,14 +28,17 @@ public class ProjectmanagementApplication {
 	}
 
 
+
 	@Bean
-	CommandLineRunner commandLineRunner(UserService userService, TicketService ticketService, RoleService roleService, ProjectService projectService, TaskService taskService){
+	CommandLineRunner commandLineRunner(UserService userService, TicketService ticketService, RoleService roleService, ProjectService projectService, TaskService taskService, UserRepository userRepository, CommentRepository commentRepository ){
 		return args -> {
-			userService.saveUser(User.builder().username("bunaymin").surName("tünç").password("12345678").email("abc").roles(new HashSet<>()).build());
-			userService.saveUser(User.builder().username("Eyüp").surName("tünç").password("abc").email("yup@eyup").roles(new HashSet<>()).imageUrl("https://cdn-icons-png.flaticon.com/512/219/219986.png").build());
+			Long sayi = Long.valueOf("1");
+			userService.saveUser(User.builder().username("bunaymin").surName("tünç").password("12345678").email("abc").roles(new HashSet<>()).name("Bunyamin").build());
+			userService.saveUser(User.builder().username("Eyüp").surName("tünç").password("abc").email("yup@eyup").roles(new HashSet<>()).name("Eyüp").imageUrl("https://cdn-icons-png.flaticon.com/512/219/219986.png").build());
 			roleService.saveRole(Role.builder().name("ROLE_ADMIN").build());
-			userService.addRoleToUser("bunaymin","ROLE_ADMIN");
-			userService.addRoleToUser("Eyüp","ROLE_ADMIN");
+			userService.addRoleToUser(sayi,sayi);
+			userService.addRoleToUser(sayi+1,sayi);
+
 
 
 			Ticket ticket = Ticket.builder().name("bug").description("there is bug").build();
@@ -37,10 +48,23 @@ public class ProjectmanagementApplication {
 			ticketService.saveTicket(ticket1);
 
 
-			projectService.saveProject(Project.builder().name("ProjectManager").tasks(new HashSet<>()).description("taskManager").build());
-			projectService.saveProject(Project.builder().name("Proje2").tasks(new HashSet<>()).description("deneme amacali acildi").build());
+			projectService.saveProject(Project.builder().name("ProjectManager").description("taskManager").build());
+			projectService.saveProject(Project.builder().name("Proje2").description("deneme amacali acildi").build());
 
 
+			System.out.println("sayi ---- >" +ticketService.findById(sayi));
+
+
+
+			AddTaskDto addTaskDto = AddTaskDto.builder().desription("task açıklama")
+					.name("Veritabanı").ticketId(sayi).ProjectId(sayi).userId(sayi).build();
+            taskService.saveTask(addTaskDto);
+			AddTaskDto addTaskDto1 = AddTaskDto.builder().desription("task1 açıklama")
+					.name("frontend").ticketId(sayi).ProjectId(sayi).userId(sayi).build();
+			taskService.saveTask(addTaskDto1);
+
+			System.out.println("comment ---> " + commentRepository.findByTask_id(Long.valueOf("1")));
+/*
 			AddTaskToProjectDto addTaskToProjectDto = AddTaskToProjectDto.builder()
 					.projectName("ProjectManager").name("Deneme").desription("deneme amaçlı açtım ")
 					.imageUrl("sadsadsadsadsad")
@@ -67,6 +91,8 @@ public class ProjectmanagementApplication {
 			for(Task task:tasks){
 				System.out.println(task);
 			}
+			*/
+
 		};
 
 

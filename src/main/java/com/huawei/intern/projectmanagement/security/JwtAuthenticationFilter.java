@@ -1,66 +1,58 @@
 package com.huawei.intern.projectmanagement.security;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
+import com.huawei.intern.projectmanagement.services.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-//sistemde kullanıcı var mı?
-@RequiredArgsConstructor
-public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final  AuthenticationManager authenticationManager;
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
-
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
+    //Reques geldi jwt kontrol ediyoruz.
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response){
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        try{
+            //headerde geliyor. header içinde tokeni alıp dönen bir fonskiyon yaratıyoruz.
+            String jwtToken = extracJwtFromRequest(request);
+            if(StringUtils.hasText(jwtToken) && jwtTokenProvider.validateToken(jwtToken)){
+                Long id = jwtTokenProvider.getUserIdFromJwt(jwtToken);
+                UserDetails user = userDetailsService.loadUserById(id);
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+                if(user != null){
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username,password);
-        return authenticationManager.authenticate(token);
+                    UsernamePasswordAuthenticationToken  auth = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
+                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+            }
+        }catch (Exception e){
+            return;
+        }
+        filterChain.doFilter(request,response);
     }
 
-    @Override
-    public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-                                         Authentication authResult) throws ServletException, IOException {
-
-
-        User user = (User) authResult.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-        String accesToken = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
-                .withIssuer(request.getRequestURI())
-                .withClaim("roles",user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .sign(algorithm);
-
-        String refreshToken = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
-                .withIssuer(request.getRequestURI())
-                .withClaim("roles",user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .sign(algorithm);
-
-        new ObjectMapper().writeValue(response.getOutputStream(), Map.of("access_token",accesToken,"refresh_token",refreshToken));
+    //header geldi bize içinde jwt var şimdi onu ayırıp geri döndüreceğiz.
+    private String extracJwtFromRequest(HttpServletRequest request) {
+        String bearer = request.getHeader("Authorization");
+        //gelen requestin headerina baktık. ve içindeki authorization a bakıyoruz boş mu diye.
+        if(StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")){
+            //beareri atlayıp token'e bakıyoruz direkt.
+            return bearer.substring("Bearer".length()+1);
+        }
+        return null;
     }
-
 }

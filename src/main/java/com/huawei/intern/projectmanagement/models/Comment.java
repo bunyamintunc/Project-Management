@@ -1,5 +1,6 @@
 package com.huawei.intern.projectmanagement.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,6 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
 
     private String fileType;
@@ -27,6 +27,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "task_id",nullable = false)
+    @JsonIgnore
     private Task task;
 
 }

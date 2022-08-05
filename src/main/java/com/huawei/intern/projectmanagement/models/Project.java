@@ -1,5 +1,6 @@
 package com.huawei.intern.projectmanagement.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,10 +18,12 @@ public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "project_id")
     private Long id;
     private String name;
     private String description;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    Set<Task> tasks;
+    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Task> tasks;
 }
