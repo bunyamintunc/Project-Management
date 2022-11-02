@@ -14,6 +14,7 @@ import java.util.Date;
 
 @Data
 @MappedSuperclass
+
 abstract  public class Item {
 
     private String name;

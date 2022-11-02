@@ -1,7 +1,7 @@
 package com.huawei.intern.projectmanagement.security;
 
-import com.huawei.intern.projectmanagement.models.Role;
-import com.huawei.intern.projectmanagement.models.User;
+import com.huawei.intern.projectmanagement.task.models.Role;
+import com.huawei.intern.projectmanagement.task.models.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;

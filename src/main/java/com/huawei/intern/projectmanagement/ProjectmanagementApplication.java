@@ -1,26 +1,25 @@
 package com.huawei.intern.projectmanagement;
 
-import com.huawei.intern.projectmanagement.dtos.request.AddTaskDto;
-import com.huawei.intern.projectmanagement.models.*;
-import com.huawei.intern.projectmanagement.repositories.CommentRepository;
-import com.huawei.intern.projectmanagement.repositories.UserRepository;
-import com.huawei.intern.projectmanagement.services.*;
-import org.hibernate.usertype.UserVersionType;
+import com.huawei.intern.projectmanagement.task.dtos.request.AddTaskDto;
+import com.huawei.intern.projectmanagement.task.repositories.CommentRepository;
+import com.huawei.intern.projectmanagement.task.repositories.UserRepository;
+import com.huawei.intern.projectmanagement.task.models.Project;
+import com.huawei.intern.projectmanagement.task.models.Role;
+import com.huawei.intern.projectmanagement.task.models.Ticket;
+import com.huawei.intern.projectmanagement.task.models.User;
+import com.huawei.intern.projectmanagement.task.services.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.HashSet;
-import java.util.List;
 
 @SpringBootApplication
+@EnableSwagger2
+@EnableWebMvc
 public class ProjectmanagementApplication {
 
 	public static void main(String[] args) {
